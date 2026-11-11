@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { loadConfig, type RigConfig } from './config.js';
+import { registerDigestJson } from './digest/json-route.js';
 import { registerDigestPage } from './digest/page-route.js';
 import { lane } from './lane.js';
 import { readStatus } from './status.js';
@@ -12,6 +13,7 @@ export function createApp(config: RigConfig = loadConfig()) {
   app.get('/health', (c) => c.json({ ok: true, lane: lane().id }));
 
   registerDigestPage(app, config);
+  registerDigestJson(app, config);
 
   app.get('/', (c) =>
     c.html(

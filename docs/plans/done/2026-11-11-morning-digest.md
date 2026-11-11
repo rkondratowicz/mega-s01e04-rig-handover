@@ -1,8 +1,9 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
+closed: 2026-11-11
 ---
 
 # Morning digest
@@ -77,3 +78,25 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Issues
+
+| # | Issue | Plan section | Blocked by | Worker | Closed |
+|---|-------|--------------|------------|--------|--------|
+| [1](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/1) | Shared digest contract | §1 | — | OpenCode · GPT-6.1 Sol · high | 2026-11-11 |
+| [2](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/2) | Run log reader | §1 | #1 | OpenCode · GPT-6.1 Sol · high | 2026-11-11 |
+| [3](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/3) | Digest page | §2a | #1; reader for runtime checks | OpenCode · GPT-6 Luna · medium | 2026-11-11 |
+| [4](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/4) | Digest JSON | §2b | #1; reader/page for parity checks | OpenCode · GPT-6 Luna · medium | 2026-11-11 |
+| [5](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/5) | Board links and event counts | §2c | #1; reader/page for link checks | OpenCode · GPT-6 Luna · medium | 2026-11-11 |
+| [6](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/6) | Route tests | §2d | #1 to start; #2–#4 to finish | OpenCode · GPT-6 Luna · medium | 2026-11-11 |
+| [7](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/7) | Public preview and review | §3 | #2–#6; publication approval; reviewer confirmation | OpenCode · GPT-6.1 Sol · default | 2026-11-11 |
+| [8](https://github.com/rkondratowicz/mega-s01e04-rig-handover/issues/8) | Preview cleanup and plan archive | §4 | #7; review received; separate cleanup approval | OpenCode · GPT-6.1 Sol · default | 2026-11-11 |
+
+## Completion checks
+
+- The shared types were committed first; the reader and four section 2 workers then worked on separate branches/worktrees.
+- All 29 tests and typecheck pass; both fixture nights render, and page/JSON jobs and order match.
+- The course confirmed that the reviewer had seen the marked preview before cleanup began.
+- After separate human approval, the page was saved again with `LANE_MARKER` unset and deployed over the same [public preview URL](https://rkondratowicz.github.io/mega-s01e04-rig-handover/).
+- The public banner reads "no marker set"; sample data is unchanged. The two temporary marked deployment artifacts were deleted with human approval.
+- No `.env`, generated preview HTML, or lane marker was committed. The `runs/` fixtures are unchanged.

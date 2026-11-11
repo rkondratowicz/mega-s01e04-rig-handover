@@ -1,0 +1,64 @@
+name: Publish approved digest preview
+
+# Manual only: each upload needs the human's approval (ADR 0003).
+# The HTML arrives as an input, never as a committed file or an issue attachment.
+on:
+  workflow_dispatch:
+    inputs:
+      html_base64:
+        description: Base64 of the approved, locally saved self-contained HTML
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Materialize the approved HTML without logging it
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64
+          import json
+          import os
+          from pathlib import Path
+
+          event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          encoded = event['inputs']['html_base64']
+          if len(encoded) > 60000:
+              raise SystemExit('Preview exceeds the 45000-byte upload limit')
+          payload = base64.b64decode(encoded, validate=True)
+          html = payload.decode('utf-8')
+          if not html.lower().startswith('<!doctype html>') or '<script' in html.lower():
+              raise SystemExit('Expected a self-contained HTML page without scripts')
+          site = Path('_site')
+          site.mkdir()
+          (site / 'index.html').write_bytes(payload)
+          print('Approved HTML prepared; contents intentionally omitted from logs.')
+          PY
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload temporary Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+          retention-days: 1
+
+      - name: Deploy to the existing public URL
+        id: deployment
+        uses: actions/deploy-pages@v4
